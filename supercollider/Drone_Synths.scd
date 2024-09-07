@@ -80,7 +80,7 @@ SynthDef(\additiveSound, {
 }).add;
 
 SynthDef(\granularSynth, {
-    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, grainPos = 0.5, envDec = 1, releaseTime = 1, carrier = 440, modulator = 480, modIndex = 1, envbuf = -1, carrierDeviation = 150;
+    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, grainPos = 0.5, envDec = 1, releaseTime = 1, carrier = 440, modulator = 480, modIndex = 1, envbuf = -1;
     var grains, env;
 
     env = EnvGen.kr(Env.linen(0.3, envDec, releaseTime), doneAction: 2);
@@ -110,14 +110,13 @@ TempoClock.default.tempo = 170 / 60;
 ~granular = Pbind(
     \instrument, \granularSynth,
     \carrier, ~noteSequence1,
-	\carrierDeviation, Pseq([[50,55], [54,66], [52,57.3], [50,54], [48,52], 59, 61.3, [48,57.1,62]].midicps, inf),
     \modulator, ~noteSequence2,
     \modIndex, Pexprand(0.5, 2, inf),
     \grainDur, Pseq([0.5, 0.4, 0.3, 0.5, 0.1], inf),
     \envDec, Pseq([1.5, 1.4, 1.3, 1.6, 1.4], inf),
-	\releaseTime, Pwhite(0.5, 1.5, inf),
+    \releaseTime, Pwhite(0.5, 1.5, inf),
     \amp, Pwhite(0.05, 0.08, inf),
-	\pan, ~panPosition * (-1),
+    \pan, ~panPosition * (-1),
     \dur, ~duration
 ).play;
 
@@ -128,7 +127,7 @@ TempoClock.default.tempo = 170 / 60;
     \waveform, Pseq([1, 0, 0, 1, 0], inf),
     \amp, Pseq([0.7, 0.4, 0.5, 0.7, 0.4], inf),
     \envDur, Pwhite(1.5, 4.0, inf),
-	\panPos, ~panPosition * (1/2),
+    \panPos, ~panPosition * (1/2),
     \reverbMix, Pseq([0.8, Pexprand(0.5, 1, inf), 0.6, 0.8, Pexprand(0.5, 1, inf)], inf)
 ).play;
 
