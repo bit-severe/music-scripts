@@ -16,7 +16,7 @@ SynthDef(\fmSwells, {
 
     modulator = SinOsc.ar(modFreq) * (carrierFreq * modIndex);
 
-	carrier = SinOsc.ar((carrierFreq * 0.5) + modulator);
+    carrier = SinOsc.ar((carrierFreq * 0.5) + modulator);
 
     envelope = Select.kr(envelopeType, [
         EnvGen.kr(Env.perc(attackTime, decayTime), doneAction: 2),  // Percussive envelope
@@ -49,7 +49,7 @@ SynthDef(\fmSwells, {
 SynthDef(\additiveSynth, {
     arg freq = 440, amp = 0.1, panPos = 0, envDur = 1, waveform = 0, reverbMix = 0.3;
 
-	var env, sineWave1, sineWave2, sineWave3, combinedSineWave, sawFreq, sawWave, sawWave1, combinedSaw, lfoFreq, lfoDepth, lfo, cutoff, filteredSaw, osc, output, reverb;
+    var env, sineWave1, sineWave2, sineWave3, combinedSineWave, sawFreq, sawWave, sawWave1, combinedSaw, lfoFreq, lfoDepth, lfo, cutoff, filteredSaw, osc, output, reverb;
 
     env = EnvGen.kr(Env([0, 1, 0], [envDur, envDur], 'sin'), doneAction: 2);
 
@@ -113,7 +113,7 @@ TempoClock.default.tempo = 80 / 60;
 ~granular = Pbind(
     \instrument, \granularSynth,
     \midinote, ~noteSequence3,
-	\impulse, Pwhite(10, 30, inf),
+    \impulse, Pwhite(10, 30, inf),
     \grainDur, Pseq([0.5, 0.4, 0.3, 0.5, 0.1], inf),
     \envDec, Pseq([2.5, 2.4, 2.3, 2.6, 2.4], inf),
     \releaseTime, Pwhite(3, 6, inf),
