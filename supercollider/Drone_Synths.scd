@@ -1,11 +1,12 @@
-// Two droning synths. One with FM Synthesis and an FFT effect and a second Additive Synth. Also there's a Granular Synth. 170 BPM for some reason.
+// Two droning synths. One with FM Synthesis and an FFT effect and a second Additive Synth. Also there's a Granular Synth.
 
+(
 ~duration = Pseq([4.5, 4.25, 4.3, 4.75, 4.25], inf);
 ~noteSequence1 = Pseq([50, [48,50,57,64].choose, [48,57,62], 50, 61].midicps, inf);
 ~noteSequence2 = Pseq([55, 62, [52,57], 55, 66].midicps, inf);
 ~noteSequence3 = Pseq([[50,55], [54,66], [52,57.3], [50,54], [48,52], 59, 61.3, [48,57.1,62]], inf);
 ~panPosition = Pseq([0, -0.8, 0.8, 0, 0.4], inf);
-
+)
 
 (
 SynthDef(\fmSwells, {
@@ -15,7 +16,7 @@ SynthDef(\fmSwells, {
 
     modulator = SinOsc.ar(modFreq) * (carrierFreq * modIndex);
 
-    carrier = SinOsc.ar(carrierFreq + modulator);
+	carrier = SinOsc.ar((carrierFreq * 0.5) + modulator);
 
     envelope = Select.kr(envelopeType, [
         EnvGen.kr(Env.perc(attackTime, decayTime), doneAction: 2),  // Percussive envelope
@@ -43,9 +44,9 @@ SynthDef(\fmSwells, {
 
     Out.ar(0, reverb * 0.8);
 }).add;
-)
 
-SynthDef(\additiveSound, {
+
+SynthDef(\additiveSynth, {
     arg freq = 440, amp = 0.1, panPos = 0, envDur = 1, waveform = 0, reverbMix = 0.3;
 
 	var env, sineWave1, sineWave2, sineWave3, combinedSineWave, sawFreq, sawWave, sawWave1, combinedSaw, lfoFreq, lfoDepth, lfo, cutoff, filteredSaw, osc, output, reverb;
@@ -80,17 +81,19 @@ SynthDef(\additiveSound, {
 }).add;
 
 SynthDef(\granularSynth, {
-    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, grainPos = 0.5, envDec = 1, releaseTime = 1, carrier = 440, modulator = 480, modIndex = 1, envbuf = -1;
+    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, envDec = 1, releaseTime = 1, freq = 440, impulse = 10, envbuf = -1;
     var grains, env;
 
     env = EnvGen.kr(Env.linen(0.3, envDec, releaseTime), doneAction: 2);
 
-	grains = GrainFM.ar(2, Impulse.kr(10), grainDur, (carrier * 2), modulator * 2, modIndex, pan, envbuf);
+    grains = GrainSin.ar(numChannels: 2, trigger: Impulse.kr(impulse), dur: grainDur, freq: freq * 2.25, pan: pan, envbufnum: envbuf);
 
-    Out.ar(0, grains * amp);
+    Out.ar(0, grains * env * amp);
 }).add;
+)
 
-TempoClock.default.tempo = 170 / 60;
+(
+TempoClock.default.tempo = 80 / 60;
 
 ~fm = Pbind(
     \instrument, \fmSwells,
@@ -99,9 +102,9 @@ TempoClock.default.tempo = 170 / 60;
     \modFreq, ~noteSequence2,
     \modIndex, Pexprand(0.5, 2, inf),
     \attackTime, Pwhite(1, 4, inf),
-    \decayTime, Pwhite(1.5, 4.0, inf),
+    \decayTime, Pwhite(3.5, 6.0, inf),
     \sustainLevel, Pwhite(0.2, 0.8, inf),
-    \releaseTime, Pwhite(1.5, 4.0, inf),
+    \releaseTime, Pwhite(3, 6.0, inf),
     \envelopeType, Pseq([0, 1, 0, 3, 2, 1, 0, 2, 3, 3], inf),
     \amp, Pseq([0.6, 0.3, 0.4, 0.6, 0.3], inf),
     \panPos, ~panPosition
@@ -109,31 +112,36 @@ TempoClock.default.tempo = 170 / 60;
 
 ~granular = Pbind(
     \instrument, \granularSynth,
-    \carrier, ~noteSequence1,
-    \modulator, ~noteSequence2,
-    \modIndex, Pexprand(0.5, 2, inf),
+    \midinote, ~noteSequence3,
+	\impulse, Pwhite(10, 30, inf),
     \grainDur, Pseq([0.5, 0.4, 0.3, 0.5, 0.1], inf),
-    \envDec, Pseq([1.5, 1.4, 1.3, 1.6, 1.4], inf),
-    \releaseTime, Pwhite(0.5, 1.5, inf),
+    \envDec, Pseq([2.5, 2.4, 2.3, 2.6, 2.4], inf),
+    \releaseTime, Pwhite(3, 6, inf),
     \amp, Pwhite(0.05, 0.08, inf),
     \pan, ~panPosition * (-1),
-    \dur, ~duration
+    \dur, ~duration,
 ).play;
 
 ~drone = Pbind(
-    \instrument, \additiveSound,
+    \instrument, \additiveSynth,
     \dur, ~duration + 4,
     \midinote, ~noteSequence3,
     \waveform, Pseq([1, 0, 0, 1, 0], inf),
     \amp, Pseq([0.7, 0.4, 0.5, 0.7, 0.4], inf),
-    \envDur, Pwhite(1.5, 4.0, inf),
+    \envDur, Pwhite(3.5, 6.0, inf),
     \panPos, ~panPosition * (1/2),
     \reverbMix, Pseq([0.8, Pexprand(0.5, 1, inf), 0.6, 0.8, Pexprand(0.5, 1, inf)], inf)
 ).play;
+)
 
+(
 ~fm.start();
 ~granular.start();
 ~drone.start();
+)
+
+(
 ~fm.stop();
 ~granular.stop();
 ~drone.stop();
+)
