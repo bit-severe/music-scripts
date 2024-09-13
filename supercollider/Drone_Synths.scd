@@ -1,10 +1,13 @@
 // Two droning synths. One with FM Synthesis and an FFT effect and a second Additive Synth. Also there's a Granular Synth.
 
+s.options.memSize_(65536 * 4);
+s.reboot;
+
 (
 ~duration = Pseq([4.5, 4.25, 4.3, 4.75, 4.25], inf);
-~noteSequence1 = Pseq([50, [48,50,57,64].choose, [48,57,62], 50, 61].midicps, inf);
-~noteSequence2 = Pseq([55, 62, [52,57], 55, 66].midicps, inf);
-~noteSequence3 = Pseq([[50,55], [54,66], [52,57.3], [50,54], [48,52], 59, 61.3, [48,57.1,62]], inf);
+~noteSequence1 = Pseq([50, [48,50,57,65].choose, [48,57,62], 50, 61].midicps, inf);
+~noteSequence2 = Pseq([55, 62, [52,57], 55, 65].midicps, inf);
+~noteSequence3 = Pseq([[50,55], [53,65], [52,57.3], [50,53], [48,52], 59, 61.3, [48,57.1,62]], inf);
 ~panPosition = Pseq([0, -0.8, 0.8, 0, 0.4], inf);
 )
 
@@ -42,7 +45,7 @@ SynthDef(\fmSwells, {
 
     reverb = FreeVerb.ar(output, 0.8, 0.8, 0.9);
 
-    Out.ar(0, reverb * 0.8);
+    Out.ar(0, reverb * 0.2);
 }).add;
 
 
@@ -75,13 +78,29 @@ SynthDef(\additiveSynth, {
 
     output = Pan2.ar(osc * (amp * env), panPos);
 
-    reverb = FreeVerb.ar(output, reverbMix, 0.8, 0.5);
+	reverb = JPverb.ar(
+        output,
+        \t60.kr(1,           0.05),
+        \damp.kr(0,          0.05),
+        \size.kr(1,          0.05),
+        \earlydiff.kr(0.707, 0.05),
+        \mdepth.kr(5,        0.05),
+        \mfreq.kr(2,         0.05),
+        \lowx.kr(1,          0.05),
+        \midx.kr(1,          0.05),
+        \highx.kr(1,         0.05),
+        \lowband.kr(500,     0.05),
+        \highband.kr(2000,   0.05)
+    );
 
-    Out.ar(0, reverb * 0.4);
+
+    //reverb = FreeVerb.ar(output, reverbMix, 0.8, 0.5);
+
+    Out.ar(0, reverb * 0.3);
 }).add;
 
 SynthDef(\granularSynth, {
-    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, envDec = 1, releaseTime = 1, freq = 440, impulse = 10, envbuf = -1;
+    arg bufnum, rate = 1, grainDur = 0.4, amp = 0.1, pan = 0, envDec = 1, releaseTime = 1, freq = 440, impulse = 10, envbuf = -1, draw = 400;
     var grains, env;
 
     env = EnvGen.kr(Env.linen(0.3, envDec, releaseTime), doneAction: 2);
@@ -113,13 +132,14 @@ TempoClock.default.tempo = 80 / 60;
 ~granular = Pbind(
     \instrument, \granularSynth,
     \midinote, ~noteSequence3,
+	\draw, Pwhite(0, 255, inf),
     \impulse, Pwhite(10, 30, inf),
     \grainDur, Pseq([0.5, 0.4, 0.3, 0.5, 0.1], inf),
     \envDec, Pseq([2.5, 2.4, 2.3, 2.6, 2.4], inf),
     \releaseTime, Pwhite(3, 6, inf),
     \amp, Pwhite(0.05, 0.08, inf),
     \pan, ~panPosition * (-1),
-    \dur, ~duration,
+    \dur, ~duration
 ).play;
 
 ~drone = Pbind(
