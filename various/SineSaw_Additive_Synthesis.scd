@@ -18,16 +18,16 @@ SynthDef(\additiveSound, {
 
     var env = EnvGen.kr(Env([0, 1, 0], [envDur, envDur], 'sin'), doneAction: 2);
 
-	//var multiplier = rrand(0.8, 2);
-	var sineWave1 = SinOsc.ar(freq);
-	var sineWave2 = SinOsc.ar(freq * (3/2));
-	var sineWave3 = SinOsc.ar(freq * 2.5); 
-	var combinedSineWave = sineWave1 + sineWave2 + sineWave3;
+    //var multiplier = rrand(0.8, 2);
+    var sineWave1 = SinOsc.ar(freq);
+    var sineWave2 = SinOsc.ar(freq * (3/2));
+    var sineWave3 = SinOsc.ar(freq * 2.5); 
+    var combinedSineWave = sineWave1 + sineWave2 + sineWave3;
 
-	var sawFreq = freq * (1/2);
-	var sawWave = Saw.ar(sawFreq);
-	var sawWave1 = Saw.ar(sawFreq * (3/2));
-	var combinedSaw = sawWave + sawWave1;
+    var sawFreq = freq * (1/2);
+    var sawWave = Saw.ar(sawFreq);
+    var sawWave1 = Saw.ar(sawFreq * (3/2));
+    var combinedSaw = sawWave + sawWave1;
 
     var lfoFreq = rrand(0.5, 2);
     var lfoDepth = rrand(0.3, 0.5);
@@ -54,12 +54,12 @@ SynthDef(\additiveSound, {
 SynthDef(\samplePlayback, {
     arg amp = 0.2, panPos = 0, loop = 0, pitchShift = 1, startPos = 0, reverbMix = 0.3, bufferIndex = 0;
 
-	var env = EnvGen.kr(Env([0, 1, 0], [8, 8], 'sin'), doneAction: 2);
+    var env = EnvGen.kr(Env([0, 1, 0], [8, 8], 'sin'), doneAction: 2);
 
-	var playbackRate = BufRateScale.kr(bufferIndex) / pitchShift;
+    var playbackRate = BufRateScale.kr(bufferIndex) / pitchShift;
 
-	var samplePlayer = PlayBuf.ar(1, bufferIndex, rate: playbackRate, loop: loop, startPos: startPos, doneAction: 2);
-	var output = Pan2.ar(samplePlayer * (amp * env), panPos);
+    var samplePlayer = PlayBuf.ar(1, bufferIndex, rate: playbackRate, loop: loop, startPos: startPos, doneAction: 2);
+    var output = Pan2.ar(samplePlayer * (amp * env), panPos);
 
     var reverb = FreeVerb.ar(output, reverbMix, 0.9, 0.5);
 
@@ -73,7 +73,7 @@ SynthDef(\samplePlayback, {
 SynthDef(\percussiveAdditive, {
     arg amp = 0.2, panPos = 0, decayTime = 0.5, delayTime = 0.2, feedback = 0.3, freqs = #[440, 550, 660];
 
-	var reverb;
+    var reverb;
 
     var env = EnvGen.kr(Env.perc(0.01, decayTime), doneAction: 2);
 
@@ -85,7 +85,7 @@ SynthDef(\percussiveAdditive, {
     var feedbackSignal = delayedSignal * feedback;
     signal = signal + feedbackSignal;
 
-	reverb = FreeVerb.ar(signal, 0.5, 0.9, 0.5);
+    reverb = FreeVerb.ar(signal, 0.5, 0.9, 0.5);
 
     Out.ar(0, reverb * 0.5);
 }).add;

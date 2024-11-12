@@ -1,5 +1,5 @@
 /*
-3 rhythmic patterns for a FM SynthDef
+3 rhythmic patterns for an FM SynthDef
 */
 
 (
@@ -43,7 +43,7 @@ TempoClock.default.tempo = 80 / 60;
 
 ~fmPattern2 = Pbind(
     \instrument, \percFM,
-    \dur, ~duration + 0.5,
+    \dur, ~duration * 2,
     \carrierFreq, 350,
     \modFreq, 750,
     \modIndex, Pexprand(0.5, 10, inf),

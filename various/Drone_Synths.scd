@@ -132,7 +132,7 @@ TempoClock.default.tempo = 80 / 60;
 ~granular = Pbind(
     \instrument, \granularSynth,
     \midinote, ~noteSequence3,
-	\draw, Pwhite(0, 255, inf),
+    \draw, Pwhite(0, 255, inf),
     \impulse, Pwhite(10, 30, inf),
     \grainDur, Pseq([0.5, 0.4, 0.3, 0.5, 0.1], inf),
     \envDec, Pseq([2.5, 2.4, 2.3, 2.6, 2.4], inf),
