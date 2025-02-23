@@ -97,7 +97,7 @@ def parse_arguments():
     """
     parser = argparse.ArgumentParser(description="Apply ffmpeg effects to the files of a given directory.")
     parser.add_argument("--audiodir", type=str, required=True, help="Path to audio files.")
-    parser.add_argument("--irdir", type=str, nargs='+', required=True, help="Path to impulse response files.")
+    parser.add_argument("--irdir", type=str, required=True, help="Path to impulse response files.")
     return parser.parse_args()            
 
 if __name__ == "__main__":
