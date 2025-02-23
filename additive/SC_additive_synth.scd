@@ -31,7 +31,7 @@ SynthDef(\additive_synth, {
 }).add;
 
 OSCdef(\start_recording, { |msg|
-   s.record(path: "E:/supercollider/" ++ msg[1], numChannels: 2);
+   s.record(path: "E:/Samples/supercollider/" ++ msg[1], numChannels: 2);
    "Recording started!".postln;
 }, "/start_recording");
 

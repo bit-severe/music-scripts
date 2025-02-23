@@ -38,7 +38,7 @@ def generate_coefficients(formula_type, num_partials, inharm):
 
 # OSC messages to trigger the synth
 filename_postfix = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-client.send_message("/start_recording", [f"additive_phm_synth_{filename_postfix}.wav"])
+client.send_message("/start_recording", [f"additive_pm_synth_{filename_postfix}.wav"])
 print("Started recording...")
 for _ in range(20):
     freq = round(random.gammavariate(5, 40), 2)
@@ -50,9 +50,8 @@ for _ in range(20):
     formula_type = random.choice(options)
     coeffs = generate_coefficients(formula_type, 15, random.uniform(0.01, 3.5))
     print(f"OSC -> freq={freq} | envelope={env_map.get(env_type)} | shift={shift} | inharm_formula={formula_type} | duration={duration} | phase_mod={phase_modulation}")
-    filename = f"{freq}f_{env_map.get(env_type)}-env_{formula_type}-inhrm_{phase_modulation}pm_{duration}dur"
     client.send_message("/additive/coeffs", coeffs)
-    client.send_message("/additive_synth", [freq, env_type, shift, duration, phase_modulation, filename])
+    client.send_message("/additive/synth", [freq, env_type, shift, duration, phase_modulation])
     time.sleep(duration * 1.5)
 client.send_message("/stop_recording", [])
 print("Stopped recording and saved the file.")
