@@ -40,7 +40,7 @@ SynthDef(\additiveSound, {
 
     var output = Pan2.ar(osc * (amp * env), panPos);
 
-    var reverb = FreeVerb.ar(output, reverbMix, 0.8, 0.5);  // FreeVerb(input, mix, room, damp)
+    var reverb = FreeVerb.ar(output, reverbMix, 0.8, 0.5);
 
     Out.ar(0, reverb * 0.2);
 }).add;

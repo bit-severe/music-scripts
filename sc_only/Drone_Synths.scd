@@ -1,6 +1,6 @@
 // Two droning synths. One with FM Synthesis and an FFT effect and a second Additive Synth. Also there's a Granular Synth.
 
-s.options.memSize_(65536 * 4);
+s.options.memSize\_(65536 \* 4);
 s.reboot;
 
 (
@@ -46,8 +46,8 @@ SynthDef(\fmSwells, {
     reverb = FreeVerb.ar(output, 0.8, 0.8, 0.9);
 
     Out.ar(0, reverb * 0.2);
-}).add;
 
+}).add;
 
 SynthDef(\additiveSynth, {
     arg freq = 440, amp = 0.1, panPos = 0, envDur = 1, waveform = 0, reverbMix = 0.3;
@@ -56,7 +56,7 @@ SynthDef(\additiveSynth, {
 
     env = EnvGen.kr(Env([0, 1, 0], [envDur, envDur], 'sin'), doneAction: 2);
 
-	//var multiplier = rrand(0.8, 2);
+    //var multiplier = rrand(0.8, 2);
     sineWave1 = SinOsc.ar(freq);
     sineWave2 = SinOsc.ar(freq * (3/2));
     sineWave3 = SinOsc.ar(freq * 2.5);
@@ -78,7 +78,7 @@ SynthDef(\additiveSynth, {
 
     output = Pan2.ar(osc * (amp * env), panPos);
 
-	reverb = JPverb.ar(
+    reverb = JPverb.ar(
         output,
         \t60.kr(1,           0.05),
         \damp.kr(0,          0.05),
@@ -97,6 +97,7 @@ SynthDef(\additiveSynth, {
     //reverb = FreeVerb.ar(output, reverbMix, 0.8, 0.5);
 
     Out.ar(0, reverb * 0.3);
+
 }).add;
 
 SynthDef(\granularSynth, {
@@ -108,6 +109,7 @@ SynthDef(\granularSynth, {
     grains = GrainSin.ar(numChannels: 2, trigger: Impulse.kr(impulse), dur: grainDur, freq: freq * 2.25, pan: pan, envbufnum: envbuf);
 
     Out.ar(0, grains * env * amp);
+
 }).add;
 )
 
@@ -138,7 +140,7 @@ TempoClock.default.tempo = 80 / 60;
     \envDec, Pseq([2.5, 2.4, 2.3, 2.6, 2.4], inf),
     \releaseTime, Pwhite(3, 6, inf),
     \amp, Pwhite(0.05, 0.08, inf),
-    \pan, ~panPosition * (-1),
+    \pan, ~panPosition \* (-1),
     \dur, ~duration
 ).play;
 
@@ -149,7 +151,7 @@ TempoClock.default.tempo = 80 / 60;
     \waveform, Pseq([1, 0, 0, 1, 0], inf),
     \amp, Pseq([0.7, 0.4, 0.5, 0.7, 0.4], inf),
     \envDur, Pwhite(3.5, 6.0, inf),
-    \panPos, ~panPosition * (1/2),
+    \panPos, ~panPosition \* (1/2),
     \reverbMix, Pseq([0.8, Pexprand(0.5, 1, inf), 0.6, 0.8, Pexprand(0.5, 1, inf)], inf)
 ).play;
 )

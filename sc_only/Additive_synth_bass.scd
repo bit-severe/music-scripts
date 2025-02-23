@@ -31,16 +31,17 @@ SynthDef(\inharmonicBassRandom, { |out=0, freq=60, amp=0.3, gate=1, shift=1.0, i
 
     // Apply envelope and output to stereo
     Out.ar(out, (sig * amp * env)!2);
+
 }).add;
 )
 
 (
 Pbind(
     \instrument, \inharmonicBassRandom,
-    \dur, 4,                          // Each event lasts 4 seconds.
-	\freq, Pseq([81, 84, 86, 95], inf) * 0.25,
+    \dur, 4, // Each event lasts 4 seconds.
+    \freq, Pseq([81, 84, 86, 95], inf) \* 0.25,
     \amp, 0.5,
-    \inharm, Pwhite(0.0, 0.2),          // Random inharmonicity.
-    \cutoff, Pexprand(800, 5500, inf)      // Random cutoff values between 80 and 200 Hz.
+    \inharm, Pwhite(0.0, 0.2), // Random inharmonicity.
+    \cutoff, Pexprand(800, 5500, inf) // Random cutoff values between 80 and 200 Hz.
 ).play;
 )

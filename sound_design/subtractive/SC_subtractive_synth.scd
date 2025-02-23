@@ -21,51 +21,51 @@ SynthDef(\rlpf_synth, {
         WhiteNoise.ar
     ]);
 
-	cutoff = In.kr(~cutoffBus.index);
-	res = ~resonanceBus;
+    cutoff = In.kr(~cutoffBus.index);
+    res = ~resonanceBus;
 
     filter = RLPF.ar(waveform, cutoff, res);
 
     Out.ar(out, (filter * env * amp) ! 2);
+
 }).add;
 
-
 OSCdef(\start_recording, { |msg|
-   s.record(path: "E:/supercollider/" ++ msg[1], numChannels: 2);
-   "Recording started!".postln;
+    s.record(path: "E:/Samples/supercollider/" ++ msg[1], numChannels: 2);
+    "Recording started!".postln;
 }, "/start_recording");
 
 OSCdef(\rlpf_synth_control, { |msg, time, addr, recvPort|
     var freq = msg[1];
     var envType = msg[2].asInteger;
-	var waveType = msg[3];
-	var dur = msg[4];
+    var waveType = msg[3];
+    var dur = msg[4];
 
     Synth(\rlpf_synth,
-		[
-			\freq, freq,
-			\envType, envType,
-			\waveType, waveType,
-			\dur, dur
-		]
-	);
+    	[
+    		\freq, freq,
+    		\envType, envType,
+    		\waveType, waveType,
+    		\dur, dur
+    	]
+    );
 
 }, '/subtractive/rlpfsynth');
 
 OSCdef(\cutoff_control, { |msg|
 
-	 ~cutoffBus.set(msg[1]);
+     ~cutoffBus.set(msg[1]);
 
 }, '/subtractive/global/cutoff');
 
 OSCdef(\resonance_control, { |msg|
 
-	 ~resonanceBus = msg[1];
+     ~resonanceBus = msg[1];
 
 }, '/subtractive/global/resonance');
 
 OSCdef(\stop_recording, { |msg|
-    s.stopRecording;
+`   s.stopRecording;
     "Recording saved".postln;
 }, "/stop_recording");
 };

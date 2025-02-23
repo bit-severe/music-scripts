@@ -3,7 +3,7 @@ s.waitForBoot {
 
 ~coeffs = Array.fill(40, { |i| i + 1 }); // Default to harmonic partials
 
-SynthDef(\additive_synth, {
+SynthDef(\synth, {
     arg out=0, freq=440, envType=0, dur=1, gate=1, shift=1.0, phaseModulation =1;
     var env, sig, partials, ampScale;
 
@@ -41,14 +41,14 @@ OSCdef(\receive_coeffs, { |msg|
     ~coeffs.postln;
 }, "/additive/coeffs");
 
-OSCdef(\python_control, { |msg, time, addr, recvPort|
+OSCdef(\synth_control, { |msg, time, addr, recvPort|
     var freq = msg[1];
     var envType = msg[2].asInteger;
 	var shift = msg[3];
 	var dur = msg[4];
 	var phaseModulation = msg[5];
 
-    Synth(\additive_synth,
+    Synth(\synth,
 		[
 			\freq, freq,
 			\envType, envType,
@@ -58,7 +58,7 @@ OSCdef(\python_control, { |msg, time, addr, recvPort|
 		]
 	);
 
-}, '/additive_synth');
+}, '/additive/synth');
 
 OSCdef(\stop_recording, { |msg|
     s.stopRecording;
