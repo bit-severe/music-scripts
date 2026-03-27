@@ -1,0 +1,2 @@
+"""Sample manager app package."""
+
